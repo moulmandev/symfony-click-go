@@ -34,6 +34,21 @@ class Shop
      */
     private $owners;
 
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $longitude;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $latitude;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $picture_url;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -112,6 +127,47 @@ class Shop
     public function removeOwner(User $owner): self
     {
         $this->owners->removeElement($owner);
+
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(float $longitude): self
+    {
+        $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getLatitude(): ?float
+    {
+        return $this->latitude;
+    }
+
+    public function setLatitude(float $latitude): self
+    {
+        $this->latitude = $latitude;
+
+        return $this;
+    }
+
+    public function getPictureUrl(): ?string
+    {
+        return $this->picture_url;
+    }
+
+    public function getPicture_Url(): ?string
+    {
+        return $this->picture_url;
+    }
+
+    public function setPictureUrl(?string $picture_url): self
+    {
+        $this->picture_url = $picture_url;
 
         return $this;
     }

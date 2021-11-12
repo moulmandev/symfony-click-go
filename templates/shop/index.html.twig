@@ -14,15 +14,40 @@
     </header>
 
     <!-- Section-->
-    <section class="py-5">
+    <section class="py-5 p-5">
         <div class="container px-4 px-lg-5 mt-5">
-            <h1>Nos magasins</h1>
+
+            <div class="row justify-content-center">
+                {{ form_start(form) }}
+                <label for="adress">Entrez votre adresse pour trouver des magasins près de chez vous. (50 Kms)</label>
+                <div class="input-group">
+                    {{ form_row(form.address) }}
+                    <span class="input-group-append">
+                            <button class="btn btn-outline-secondary bg-white border-start-0 border rounded-pill ms-n3" type="sumbit">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                </div>
+                {{ form_end(form) }}
+            </div>
+
+            {% if proximity is defined %}
+                <h1>Nos magasins à moins de 50kms de votre adresse</h1>
+            {% else %}
+                <h1>Tous nos magasins</h1>
+            {% endif %}
+
+
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+
+                {% if shops is empty %}
+                    <h2>Pas de résultats</h2>
+                {% endif %}
 
                 {% for shop in shops %}
                     <div class="col mb-5">
                         <div class="card h-100">
-                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <img class="card-img-top" src="{{ shop.picture_url|default('https://dummyimage.com/450x300/dee2e6/6c757d.jpg') }}" alt="" />
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <h5 class="fw-bolder">{{ shop.name }}</h5>
@@ -30,6 +55,9 @@
                             </div>
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ path('shop_view', {id: shop.id}) }}">Voir</a></div>
+                                {% if shop.distance is defined %}
+                                    <p>{{ shop.distance }}</p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

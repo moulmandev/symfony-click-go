@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Reservation;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -49,5 +50,7 @@ class DashboardController extends AbstractDashboardController
             ->setController(ShopCrudController::class);
         yield MenuItem::linkToCrud('Product', 'fas fa-comments', Product::class)
             ->setController(ProductCrudController::class);
+        yield MenuItem::linkToCrud('Reservation', 'fas fa-comments', Reservation::class)
+            ->setController(ReservationCrudController::class);
     }
 }

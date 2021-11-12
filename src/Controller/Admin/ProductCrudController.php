@@ -21,6 +21,7 @@ class ProductCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name'),
+            TextField::new('picture_url'),
             MoneyField::new('price')->setCurrency('EUR'),
             IntegerField::new('quantity'),
             AssociationField::new('shop'),

@@ -7,6 +7,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 
 class ShopCrudController extends AbstractCrudController
 {
@@ -19,6 +20,9 @@ class ShopCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name'),
+            TextField::new('picture_url'),
+            NumberField::new('longitude'),
+            NumberField::new('latitude'),
             AssociationField::new('owners'),
         ];
     }

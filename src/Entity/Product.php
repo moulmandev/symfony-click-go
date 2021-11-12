@@ -40,6 +40,11 @@ class Product
      */
     private $quantity;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $picture_url;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -96,5 +101,22 @@ class Product
     public function __toString()
     {
         return $this->getName();
+    }
+
+    public function getPictureUrl(): ?string
+    {
+        return $this->picture_url;
+    }
+
+    public function getPicture_Url(): ?string
+    {
+        return $this->picture_url;
+    }
+
+    public function setPictureUrl(?string $picture_url): self
+    {
+        $this->picture_url = $picture_url;
+
+        return $this;
     }
 }
