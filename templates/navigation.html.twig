@@ -8,14 +8,13 @@
                 <li class="nav-item"><a class="nav-link" href="#">A propos</a></li>
             </ul>
 
+            <form class="d-flex">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                <form class="d-flex">
-                    <button class="btn btn-outline-dark" type="submit">
-                        <i class="bi-cart-fill me-1"></i>
-                        Panier
-                        <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
-                    </button>
-                </form>
+
+                <a href="{{ path("user_viewCart") }}" class="btn btn-outline-dark me-2" type="submit">
+                    <i class="bi-cart-fill me-1"></i>Panier<span class="badge bg-dark text-white ms-1 rounded-pill">{{ app.user.cart|length }}</span>
+                </a>
+
 
                 <div class="dropdown text-end">
                     <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -30,7 +29,7 @@
             {% else %}
                 <a class="btn btn-outline-dark" href="{{ path('app_login') }}">S'identifier</a>
             {% endif %}
-
+        </form>
 
         </div>
     </div>

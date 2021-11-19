@@ -49,10 +49,16 @@ class Shop
      */
     private $picture_url;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Reservation::class, mappedBy="shop")
+     */
+    private $reservations;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->owners = new ArrayCollection();
+        $this->reservations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,6 +174,33 @@ class Shop
     public function setPictureUrl(?string $picture_url): self
     {
         $this->picture_url = $picture_url;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reservation[]
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): self
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations[] = $reservation;
+            $reservation->addShop($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): self
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            $reservation->removeShop($this);
+        }
 
         return $this;
     }

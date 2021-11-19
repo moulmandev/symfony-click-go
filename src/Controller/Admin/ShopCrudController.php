@@ -24,6 +24,7 @@ class ShopCrudController extends AbstractCrudController
             NumberField::new('longitude'),
             NumberField::new('latitude'),
             AssociationField::new('owners'),
+            AssociationField::new('reservations'),
         ];
     }
 }

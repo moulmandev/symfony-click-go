@@ -1,0 +1,90 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier{% endblock %}
+
+{% block body %}
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Panier</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section-->
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+            <a href="{{ path('shop_index')}}" class="btn btn-secondary btn-icon"><span class="icon fas fa-arrow-left"></span></a>
+            <h2>Vos paniers</h2>
+
+            <div class="container mb-4">
+                <div class="row">
+                    <div class="col-12">
+
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th scope="col"> </th>
+                                    <th scope="col">Product</th>
+                                    <th scope="col" class="text-right">Price</th>
+                                    <th> </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in app.user.cart %}
+                                    <tr>
+                                        <td><img class="img-thumbnail w-25" src="{{ product.picture_url|default("https://dummyimage.com/50x50/55595c/fff") }}" /> </td>
+                                        <td>{{ product.name }}</td>
+                                        <td class="text-right">{{ product.price}} €</td>
+                                        <td class="text-right">
+                                            <form action="{{ path('user_removeCart') }}" method="POST">
+                                                <input type="hidden" aria-hidden="true" id="product_id" name="product_id" value="{{ product.id }}">
+                                                <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td><strong>Total</strong></td>
+                                    <td class="text-right"><strong>{{ total }} €</strong></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col mb-2">
+                        <div class="row">
+                            <form action=" {{ path("user_validCart") }}" method="post" id="cartform">
+                                <label for="creneau-select">Choisissez un créneau :</label>
+                                <select name="creneau" id="creneau-select" form="cartform">
+                                    <option value="">--Merci de choisir un créneau--</option>
+                                    {% for slot in slots %}
+                                        <option value="{{ slot.id }}">{{ slot }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="col-sm-12 col-md-6 text-right">
+                                    <button type="submit" class="btn btn-lg btn-block btn-success text-uppercase">Commander</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+

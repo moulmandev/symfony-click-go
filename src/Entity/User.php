@@ -49,9 +49,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $shops;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Product::class)
+     */
+    private $cart;
+
     public function __construct()
     {
         $this->shops = new ArrayCollection();
+        $this->cart = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,6 +189,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->shops->removeElement($shop)) {
             $shop->removeOwner($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getCart(): Collection
+    {
+        return $this->cart;
+    }
+
+    public function addCart(Product $cart): self
+    {
+        if (!$this->cart->contains($cart)) {
+            $this->cart[] = $cart;
+        }
+
+        return $this;
+    }
+
+    public function removeCart(Product $cart): self
+    {
+        $this->cart->removeElement($cart);
 
         return $this;
     }
