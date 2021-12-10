@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Shop index{% endblock %}
+
+{% block body %}
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Mes commandes</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section-->
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 mt-5">
+
+            {% include 'flash.html.twig' %}
+
+            <a href="{{ path('shop_index')}}" class="btn btn-secondary btn-icon"><span class="icon fas fa-arrow-left"></span></a>
+
+            {% for command in commands %}
+                <div class="container mt-5 border border-dark">
+                    <h3>Commande #{{ command.id }}</h3>
+                    <ul>
+                        {% for product in command.products %}
+                            <li>{{ product.name }} | Prix : {{ product.price}}€</li>
+                        {% endfor %}
+                    </ul>
+                    <h4>Point de retrait : {{ command.retrait }} </h4>
+                    <h4>Créneau : {{ command.reservation }}</h4>
+                    <h4>Livrée : {{ command.delivered ? 'Oui' : 'Non' }}</h4>
+                </div>
+            {% endfor %}
+        </div>
+
+        </div>
+    </section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+

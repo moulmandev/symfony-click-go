@@ -14,6 +14,9 @@
     <!-- Section-->
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
+
+            {% include 'flash.html.twig' %}
+
             <a href="{{ path('shop_index')}}" class="btn btn-secondary btn-icon"><span class="icon fas fa-arrow-left"></span></a>
             <h2>Vos paniers</h2>
 
@@ -57,12 +60,22 @@
                     </div>
                     <div class="col mb-2">
                         <div class="row">
-                            <form action=" {{ path("user_validCart") }}" method="post" id="cartform">
+                            <form action="{{ path("user_validCart") }}" method="post" id="cartform">
                                 <label for="creneau-select">Choisissez un créneau :</label>
                                 <select name="creneau" id="creneau-select" form="cartform">
                                     <option value="">--Merci de choisir un créneau--</option>
                                     {% for slot in slots %}
                                         <option value="{{ slot.id }}">{{ slot }}</option>
+                                    {% endfor %}
+                                </select>
+
+                                <br>
+
+                                <label for="retrait-select">Choisissez un point de retrait :</label>
+                                <select name="retrait" id="retrait-select" form="cartform">
+                                    <option value="">--Merci de choisir un point de retrait--</option>
+                                    {% for shop in shops %}
+                                        <option value="{{ shop.id }}">{{ shop.name }}</option>
                                     {% endfor %}
                                 </select>
                                 <div class="col-sm-12 col-md-6 text-right">

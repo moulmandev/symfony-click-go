@@ -6,9 +6,11 @@ use App\Entity\Shop;
 use App\Form\AddressType;
 use App\Form\ShopType;
 use App\Repository\ShopRepository;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -50,6 +52,8 @@ class ShopController extends AbstractController
 
             //TODO: fetch products in search
 
+            // TODO: livre isbn https://www.googleapis.com/books/v1/volumes?q=isbn:9781781101049
+
             return $this->render('shop/index.html.twig', [
                 'shops' => $shops,
                 'proximity' => true,
@@ -72,15 +76,46 @@ class ShopController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'shop_contact', methods: ['POST'])]
+    #[Route('/{id}/contact', name: 'shop_contact', methods: ['GET'])]
     public function contact(Shop $shop): Response
     {
-        dd("true");
+        return $this->render('shop/contact.html.twig', [
+            'shop' => $shop,
+        ]);
+    }
 
-//        return $this->render('shop/view.html.twig', [
-//            'shop' => $shop,
-//            'products' => $shop->getProducts(),
-//        ]);
+    #[Route('/{id}/contact', name: 'shop_contactForm', methods: ['POST'])]
+    public function contactForm(MailerInterface $mailer, Request $request, Shop $shop): Response
+    {
+        $email = $request->request->get("email");
+        $message = $request->request->get("message");
+
+        if (!$email) {
+            $this->addFlash('error', 'Merci de renseigner votre adresse email.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        if (!$message) {
+            $this->addFlash('error', 'Merci de renseigner un message.');
+            return $this->redirect($request->headers->get('referer'));
+        }
+
+        $owners = $shop->getOwners();
+
+        foreach ($owners as $owner) {
+            $email = (new TemplatedEmail())
+                ->from($email)
+                ->to($owner->getEmail())
+                ->subject('Click&Go - Nouveau message depuis la plateforme')
+                ->html('<h1>Nouveau message depuis la plateforme de '.$email.' :</h1><p>'. $message.'</p>');
+
+            $mailer->send($email);
+        }
+
+
+        $this->addFlash('success', 'Votre message a bien été envoyé.');
+        return $this->redirect($request->headers->get('referer'));
+
     }
 
     #[Route('/{adress}', name: 'shop_adress', methods: ['GET'])]

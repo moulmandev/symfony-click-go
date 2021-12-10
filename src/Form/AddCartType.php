@@ -8,14 +8,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AddressType extends AbstractType
+class AddCartType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('address', TextType::class, [
                 "attr" => ["class" => "form-control border-end-0 border rounded-pill"],
-                "row_attr" => [],
+                "row_attr" => ["class" => "input-group"],
                 "label" => false,
             ])
         ;

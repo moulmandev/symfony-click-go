@@ -54,10 +54,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $cart;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Command::class, mappedBy="user")
+     */
+    private $commands;
+
     public function __construct()
     {
         $this->shops = new ArrayCollection();
         $this->cart = new ArrayCollection();
+        $this->commands = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -201,6 +207,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->cart;
     }
 
+    public function clearCart(): self
+    {
+        $this->cart = [];
+        return $this;
+    }
+
     public function addCart(Product $cart): self
     {
         if (!$this->cart->contains($cart)) {
@@ -213,6 +225,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeCart(Product $cart): self
     {
         $this->cart->removeElement($cart);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Command[]
+     */
+    public function getCommands(): Collection
+    {
+        return $this->commands;
+    }
+
+    public function addCommand(Command $command): self
+    {
+        if (!$this->commands->contains($command)) {
+            $this->commands[] = $command;
+            $command->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommand(Command $command): self
+    {
+        if ($this->commands->removeElement($command)) {
+            // set the owning side to null (unless already changed)
+            if ($command->getUser() === $this) {
+                $command->setUser(null);
+            }
+        }
 
         return $this;
     }

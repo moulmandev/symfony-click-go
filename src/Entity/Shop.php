@@ -54,11 +54,17 @@ class Shop
      */
     private $reservations;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Command::class, mappedBy="retrait")
+     */
+    private $commands;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
         $this->owners = new ArrayCollection();
         $this->reservations = new ArrayCollection();
+        $this->commands = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -200,6 +206,36 @@ class Shop
     {
         if ($this->reservations->removeElement($reservation)) {
             $reservation->removeShop($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Command[]
+     */
+    public function getCommands(): Collection
+    {
+        return $this->commands;
+    }
+
+    public function addCommand(Command $command): self
+    {
+        if (!$this->commands->contains($command)) {
+            $this->commands[] = $command;
+            $command->setRetrait($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommand(Command $command): self
+    {
+        if ($this->commands->removeElement($command)) {
+            // set the owning side to null (unless already changed)
+            if ($command->getRetrait() === $this) {
+                $command->setRetrait(null);
+            }
         }
 
         return $this;

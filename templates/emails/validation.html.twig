@@ -1,0 +1,14 @@
+<h1>Votre commande a été validée #{{ id }}</h1>
+
+<h2>Détails de la commande : </h2>
+<ul>
+    {% for product in products %}
+        <li>{{ product.name }} | Prix : {{ product.price}}€</li>
+    {% endfor %}
+</ul>
+<h2>Total TTC: {{ total }}€</h2>
+
+<h3>Créneau : {{ creneau }}</h3>
+<h3>Point de retrait : {{ shop.name }}</h3>
+
+<p>Merci de votre confiance.</p>
