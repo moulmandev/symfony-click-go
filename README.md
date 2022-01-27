@@ -4,6 +4,8 @@ Requis :
 
 - PHP >= 8.0
 - Composer
+- Un serveur MySQL
+- Un serveur mail
 
 Installation :
 
