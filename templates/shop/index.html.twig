@@ -34,15 +34,15 @@
             </div>
 
             {% if proximity is defined %}
-                <h1>Nos magasins à moins de 50kms de votre adresse</h1>
+                <h1>Nos magasins et produits à proximités de chez vous</h1>
             {% else %}
-                <h1>Tous nos magasins</h1>
+                <h1>Tous nos magasins et produits</h1>
             {% endif %}
 
 
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
 
-                {% if shops is empty %}
+                {% if shops is empty and products is empty %}
                     <h2>Pas de résultats</h2>
                 {% endif %}
 
@@ -59,6 +59,39 @@
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ path('shop_view', {id: shop.id}) }}">Voir</a></div>
                                 {% if shop.distance is defined %}
                                     <p>{{ shop.distance }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% for product in products %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <img class="card-img-top" src="{{ product.picture_url|default('https://dummyimage.com/450x300/dee2e6/6c757d.jpg') }}" alt="..." />
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <h5 class="fw-bolder">{{ product.name }}</h5>
+                                </div>
+                            </div>
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+
+                                    {% if product.quantity is defined and product.quantity > 0 %}
+                                        <form action="{{ path('user_cart') }}" method="post">
+                                            <input type="hidden" aria-hidden="true" id="shop_id" name="shop_id" value="{{ product.shop.id }}">
+                                            <input type="hidden" aria-hidden="true" id="product_id" name="product_id" value="{{ product.id }}">
+                                            <label for="quantity">Quantité : </label>
+                                            <input id="quantity" name="quantity" type="number" value="1" min=1 max={{ product.quantity }}>
+                                            <button type="submit" class="btn btn-outline-dark mt-auto">Ajouter au panier</button>
+                                        </form>
+                                        <div class="text-center text-info">Restants : {{ product.quantity }}</div>
+                                    {% else %}
+                                        <div class="text-center text-danger">Plus de stock</div>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ path('app_login') }}">Ajouter au panier</a></div>
+                                    <div class="text-center text-opacity-50">(Connectez-vous pour commencer vos achats)</div>
                                 {% endif %}
                             </div>
                         </div>

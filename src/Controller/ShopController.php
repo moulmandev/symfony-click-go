@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Shop;
 use App\Form\AddressType;
 use App\Form\ShopType;
+use App\Repository\ProductRepository;
 use App\Repository\ShopRepository;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,44 +19,56 @@ use Symfony\Component\HttpClient\HttpClient;
 class ShopController extends AbstractController
 {
     #[Route('/', name: 'shop_index', methods: ['GET', 'POST'])]
-    public function index(ShopRepository $shopRepository, Request $request): Response
+    public function index(ShopRepository $shopRepository, ProductRepository $productRepository, Request $request): Response
     {
         $form = $this->createForm(AddressType::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $client = HttpClient::create();
-            $response = $client->request(
-                'GET',
-                'http://api.positionstack.com/v1/forward',
-                [
-                    'query' => [
-                        'access_key' => $this->getParameter('app.positionstack_api_key'),
-                        'query' => $data["address"],
-                    ]
-                ],
-            );
 
-            $responseData = $response->toArray()["data"][0];
-            $shops = $shopRepository->findAll();
-            foreach ($shops as $key => &$shop) {
-                $distance = round($this->distance($shop->getLatitude(), $shop->getLongitude(), $responseData["latitude"], $responseData["longitude"]), 0);
+            $products = $productRepository->createQueryBuilder('p')
+                ->where('p.name LIKE upper(:name)')
+                ->setParameter('name', $data["address"])
+                ->getQuery()
+                ->execute();
 
-                if ($distance > 50000) {
-                    unset($shops[$key]);
+
+            if (strlen($data["address"]) >= 3) {
+                $client = HttpClient::create();
+                $response = $client->request(
+                    'GET',
+                    'http://api.positionstack.com/v1/forward',
+                    [
+                        'query' => [
+                            'access_key' => $this->getParameter('app.positionstack_api_key'),
+                            'query' => $data["address"],
+                        ]
+                    ],
+                );
+
+                $responseData = $response->toArray()["data"][0];
+                $shops = $shopRepository->findAll();
+                foreach ($shops as $key => &$shop) {
+                    $distance = round($this->distance($shop->getLatitude(), $shop->getLongitude(), $responseData["latitude"], $responseData["longitude"]), 0);
+
+                    if ($distance > 50000) {
+                        unset($shops[$key]);
+                    }
+
+                    $distance = ($distance >= 1000 ? (round(($distance / 1000), 0) . "Km") : ($distance . "m"));
+                    $shop->distance = $distance;
                 }
-
-                $distance = ($distance >= 1000 ? (round(($distance / 1000), 0) . "Km") : ($distance . "m"));
-                $shop->distance = $distance;
             }
+
 
             //TODO: fetch products in search
 
             // TODO: livre isbn https://www.googleapis.com/books/v1/volumes?q=isbn:9781781101049
 
             return $this->render('shop/index.html.twig', [
-                'shops' => $shops,
+                'shops' => $shops ?? null,
+                'products' => $products,
                 'proximity' => true,
                 'form' => $form->createView(),
             ]);
@@ -63,6 +76,7 @@ class ShopController extends AbstractController
 
         return $this->render('shop/index.html.twig', [
             'shops' => $shopRepository->findAll(),
+            'products' => [],
             'form' => $form->createView(),
         ]);
     }

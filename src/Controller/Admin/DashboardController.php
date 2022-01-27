@@ -43,6 +43,7 @@ class DashboardController extends AbstractDashboardController
 
     public function configureMenuItems(): iterable
     {
+        yield MenuItem::linkToUrl("Retour au site", "fas fa-arrow-left", "https://symfony.moulmandev.fr");
         yield MenuItem::linktoDashboard('Dashboard', 'fa fa-home');
         yield MenuItem::linkToCrud('User', 'fas fa-map-marker-alt', User::class)
             ->setController(UserCrudController::class);
